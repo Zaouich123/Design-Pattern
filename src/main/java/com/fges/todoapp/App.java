@@ -31,17 +31,11 @@ public class App {
     }
 
     public static int exec(String[] args) throws IOException {
-        Options cliOptions = new Options();
-        CommandLineParser parser = new DefaultParser();
-
-        cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
-
         CommandLine cmd;
         try {
-            cmd = parser.parse(cliOptions, args);
-        } catch (ParseException ex) {
-            System.err.println("Fail to parse arguments: " + ex.getMessage());
-            return 1;
+            cmd = CommandeParser.parse(args);
+        } catch (java.text.ParseException e) {
+            throw new IllegalArgumentException("Erreur lors de l'analyse des arguments en ligne de commande.", e);
         }
 
         String fileName = cmd.getOptionValue("s");
@@ -55,12 +49,7 @@ public class App {
         String command = positionalArgs.get(0);
 
         Path filePath = Paths.get(fileName);
-
-        String fileContent = "";
-
-        if (Files.exists(filePath)) {
-            fileContent = Files.readString(filePath);
-        }
+        String fileContent = FileClass.readFileContent(fileName);
 
         if (command.equals("insert")) {
             if (positionalArgs.size() < 2) {
@@ -69,54 +58,11 @@ public class App {
             }
             String todo = positionalArgs.get(1);
 
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not reconised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.add(todo);
-                }
-
-                Files.writeString(filePath, actualObj.toString());
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
-                    fileContent += "\n";
-                }
-                fileContent += todo;
-
-                Files.writeString(filePath, fileContent);
-            }
+            TodoCheck.insertTodo(fileName, fileContent, todo);
         }
 
-
         if (command.equals("list")) {
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not recognised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.forEach(node -> System.out.println("- " + node.toString()));
-                }
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                System.out.println(Arrays.stream(fileContent.split("\n"))
-                        .map(todo -> "- " + todo)
-                        .collect(Collectors.joining("\n"))
-                );
-            }
+            TodoCheck.listTodos(fileName, fileContent);
         }
 
         System.err.println("Done.");
