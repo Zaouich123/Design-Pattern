@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class TodoCheck {
         }
     }
 
-    public static void listTodos(String fileName, String fileContent) throws IOException {
+    public static void listTodos(String fileName, String fileContent, boolean doneOnly) throws IOException {
         if (fileName.endsWith(".json")) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
@@ -44,13 +43,18 @@ public class TodoCheck {
             }
 
             if (actualObj instanceof ArrayNode arrayNode) {
-                arrayNode.forEach(node -> System.out.println("- " + node.toString()));
+                arrayNode.forEach(node -> {
+                    String todoText = node.toString();
+                    if (!doneOnly || todoText.startsWith("\"Done: ")) {
+                        System.out.println("- " + todoText);
+                    }
+                });
             }
         } else if (fileName.endsWith(".csv")) {
-            System.out.println(Arrays.stream(fileContent.split("\n"))
+            Arrays.stream(fileContent.split("\n"))
+                    .filter(todo -> !doneOnly || todo.startsWith("Done: "))
                     .map(todo -> "- " + todo)
-                    .collect(Collectors.joining("\n"))
-            );
+                    .forEach(System.out::println);
         }
     }
 }

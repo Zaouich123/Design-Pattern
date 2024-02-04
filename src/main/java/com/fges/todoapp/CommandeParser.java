@@ -11,6 +11,7 @@ public class CommandeParser {
     public static CommandLine parse(String[] args) throws ParseException {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "Fichier contenant les todos");
+        cliOptions.addOption("done", false, "Liste seulement les todos terminés");
 
         try {
             CommandLineParser parser = new DefaultParser();

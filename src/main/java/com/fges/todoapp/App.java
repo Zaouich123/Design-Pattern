@@ -58,11 +58,16 @@ public class App {
             }
             String todo = positionalArgs.get(1);
 
-            TodoCheck.insertTodo(fileName, fileContent, todo);
+            if (cmd.hasOption("done")){
+                todo = "Done: " + todo;
+            }
+
+            TodoCheck.insertTodo(fileName, fileContent,todo);
         }
 
         if (command.equals("list")) {
-            TodoCheck.listTodos(fileName, fileContent);
+            boolean doneOnly = cmd.hasOption("done");
+            TodoCheck.listTodos(fileName, fileContent, doneOnly);
         }
 
         System.err.println("Done.");
