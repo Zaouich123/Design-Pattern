@@ -1,22 +1,12 @@
 package com.fges.todoapp;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.MissingNode;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Hello world!
@@ -51,7 +41,8 @@ public class App {
 
         Path filePath = Paths.get(fileName);
         String fileContent = FileClass.readFileContent(fileName);
-        TodoCheck todoChecker = new TodoCheck();
+        JsonTodoCheck jsonTodoChecker = new JsonTodoCheck();
+        CsvTodoCheck csvTodoChecker = new CsvTodoCheck();
 
         if (command.equals("insert")) {
             if (positionalArgs.size() < 2) {
@@ -59,20 +50,30 @@ public class App {
                 return 1;
             }
             Todo todoObject = new Todo(positionalArgs.get(1));
-            if (cmd.hasOption("done")){
+            if (cmd.hasOption("done")) {
                 todoObject.setText("Done: " + todoObject.toString());
             }
 
 
-            todoChecker.insertTodo(fileName, fileContent,todoObject);
+            if (fileName.endsWith("csv")) {
+                csvTodoChecker.insertTodo(fileName, fileContent, todoObject);
+            } else if (fileName.endsWith("json")) {
+                jsonTodoChecker.insertTodo(fileName, fileContent, todoObject);
+            }
         }
 
         if (command.equals("list")) {
             boolean doneOnly = cmd.hasOption("done");
-            todoChecker.listTodos(fileName, fileContent, doneOnly);
-        }
+            if (fileName.endsWith("csv")) {
+                csvTodoChecker.listTodos(fileName, fileContent, doneOnly);
+            } else if (fileName.endsWith("json")) {
+                jsonTodoChecker.listTodos(fileName, fileContent, doneOnly);
+            }
 
+
+        }
         System.err.println("Done.");
         return 0;
+
     }
 }
