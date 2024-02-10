@@ -17,7 +17,7 @@
 > - J'ai trouvé difficile le fait de savoir lire et comparé les ghost tests, d'ailleur j'ai encore des difficultées
 > - Les ghost tests 
 > # Qu'est ce que je dois encore changer ?
-> - Je dois encore changer dans insert todo je crois le fait que le programme ne doit pas dependre de la classe todo mais je n'ai pas encore trouvé le moyen, je pense aussi que le main peut etre modifié pour etre plus simple
+> - Je dois encore changer dans insert todo je crois le fait que le programme ne doit pas dependre de la classe todo mais je n'ai pas encore trouvé le moyen, je pense aussi que le main peut etre modifié pour etre plus simple. De plus j'ai encore des erreurs dans les ghosttests
 > # Anything relevant
 > 
 > Add a link to schemas describing your architecture (UML or not but add a legend)
