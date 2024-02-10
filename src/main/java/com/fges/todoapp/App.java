@@ -48,26 +48,28 @@ public class App {
 
         String command = positionalArgs.get(0);
 
+
         Path filePath = Paths.get(fileName);
         String fileContent = FileClass.readFileContent(fileName);
+        TodoCheck todoChecker = new TodoCheck();
 
         if (command.equals("insert")) {
             if (positionalArgs.size() < 2) {
                 System.err.println("Missing TODO name");
                 return 1;
             }
-            String todo = positionalArgs.get(1);
-
+            Todo todoObject = new Todo(positionalArgs.get(1));
             if (cmd.hasOption("done")){
-                todo = "Done: " + todo;
+                todoObject.setText("Done: " + todoObject.toString());
             }
 
-            TodoCheck.insertTodo(fileName, fileContent,todo);
+
+            todoChecker.insertTodo(fileName, fileContent,todoObject);
         }
 
         if (command.equals("list")) {
             boolean doneOnly = cmd.hasOption("done");
-            TodoCheck.listTodos(fileName, fileContent, doneOnly);
+            todoChecker.listTodos(fileName, fileContent, doneOnly);
         }
 
         System.err.println("Done.");

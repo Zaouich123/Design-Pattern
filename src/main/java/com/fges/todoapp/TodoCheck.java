@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TodoCheck {
-    public static void insertTodo(String fileName, String fileContent, String todo) throws IOException {
+public class TodoCheck implements TodoInterfaceCheck{
+    public void insertTodo(String fileName, String fileContent, Todo todo) throws IOException {
         if (fileName.endsWith(".json")) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
@@ -20,7 +21,8 @@ public class TodoCheck {
             }
 
             if (actualObj instanceof ArrayNode arrayNode) {
-                arrayNode.add(todo);
+                ObjectNode todoNode = mapper.valueToTree(todo);
+                arrayNode.add(todoNode);
             }
 
             FileClass.writeFileContent(fileName, actualObj.toString());
@@ -28,13 +30,13 @@ public class TodoCheck {
             if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
                 fileContent += "\n";
             }
-            fileContent += todo;
+            fileContent += todo.toString();
 
             FileClass.writeFileContent(fileName, fileContent);
         }
     }
 
-    public static void listTodos(String fileName, String fileContent, boolean doneOnly) throws IOException {
+    public void listTodos(String fileName, String fileContent, boolean doneOnly) throws IOException {
         if (fileName.endsWith(".json")) {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
@@ -44,16 +46,24 @@ public class TodoCheck {
 
             if (actualObj instanceof ArrayNode arrayNode) {
                 arrayNode.forEach(node -> {
-                    String todoText = node.toString();
-                    if (!doneOnly || todoText.startsWith("\"Done: ")) {
-                        System.out.println("- " + todoText);
+                    Todo todo = mapper.convertValue(node, Todo.class);
+                    if (!doneOnly || todo.isDone()) {
+                        System.out.println("- " + todo.toString());
                     }
                 });
             }
         } else if (fileName.endsWith(".csv")) {
             Arrays.stream(fileContent.split("\n"))
-                    .filter(todo -> !doneOnly || todo.startsWith("Done: "))
-                    .map(todo -> "- " + todo)
+                    .map(line -> {
+                        String[] fields = line.split(",");
+                        if (fields.length > 0) {
+                            return new Todo(fields[0]);
+                        } else {
+                            return null; // Ignorer les lignes sans données
+                        }
+                    })
+                    .filter(todo -> !doneOnly || todo.isDone()) // Utilisation de la méthode isDone() pour vérifier si la tâche est terminée
+                    .map(todo -> "- " + todo.toString())
                     .forEach(System.out::println);
         }
     }
