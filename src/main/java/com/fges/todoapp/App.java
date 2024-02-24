@@ -30,6 +30,7 @@ public class App {
         }
 
         String fileName = cmd.getOptionValue("s");
+        String fileNameOutpout = cmd.getOptionValue("o");
 
         List<String> positionalArgs = cmd.getArgList();
         if (positionalArgs.isEmpty()) {
@@ -43,6 +44,7 @@ public class App {
         String fileContent = FileClass.readFileContent(fileName);
 
         TodoInterfaceStorage todoChecker = TodoCheckFilename.createTodoChecker(fileName);
+        MigrationInterface MigrationFile = com.fges.todoapp.migration.MigrationCheckFilename.createMigration(fileName,fileNameOutpout);
 
         if (!Files.exists(filePath)) {
             try {
@@ -63,6 +65,9 @@ public class App {
                 todoObject.setText("Done: " + todoObject.getText());
             }
             todoChecker.insertTodo(fileName, todoObject);
+        }
+        if (command.equals("migrate")) {
+            MigrationFile.migrate(fileName,fileNameOutpout);
         }
 
         if (command.equals("list")) {

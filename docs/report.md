@@ -27,4 +27,19 @@
 > Fill free to contact me if needed.
 
 ---
+
+> #TP3
+> ## What did I change?
+> - I created multiple classes and interfaces to adhere to the SOLID principles.
+
+> ## What helped me and why
+> - Nothing helped me.
+> ## What did I find difficult
+> - Separating all classes and functions for the Single Responsibility Principle.
+> - Dealing with ghost tests.
+> ## What do I still need to change?
+> - Ghost tests.
+> ## Description of classes
+> - Refer to the UML diagram.
+
 ...

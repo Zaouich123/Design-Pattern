@@ -12,7 +12,7 @@ public class CommandeParser {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "Fichier contenant les todos");
         cliOptions.addOption("d", false, "Liste seulement les todos terminés");
-
+        cliOptions.addOption("o", "output", true, "Fichier de sortie pour la migration");
         try {
             CommandLineParser parser = new DefaultParser();
             return parser.parse(cliOptions, args);
