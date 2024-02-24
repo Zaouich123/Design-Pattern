@@ -4,6 +4,7 @@ package com.fges.todoapp;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -38,40 +39,37 @@ public class App {
 
         String command = positionalArgs.get(0);
 
-
         Path filePath = Paths.get(fileName);
         String fileContent = FileClass.readFileContent(fileName);
-        JsonTodoCheck jsonTodoChecker = new JsonTodoCheck();
-        CsvTodoCheck csvTodoChecker = new CsvTodoCheck();
+
+        TodoInterfaceStorage todoChecker = TodoCheckFilename.createTodoChecker(fileName);
+
+        if (!Files.exists(filePath)) {
+            try {
+                Files.createFile(filePath);
+            } catch (IOException e) {
+                System.err.println("Error creating file: " + e.getMessage());
+                return 1;
+            }
+        }
 
         if (command.equals("insert")) {
             if (positionalArgs.size() < 2) {
                 System.err.println("Missing TODO name");
                 return 1;
             }
-            Todo todoObject = new Todo(positionalArgs.get(1));
-            if (cmd.hasOption("done")) {
-                todoObject.setText("Done: " + todoObject.toString());
+            Todo todoObject = new Todo(positionalArgs.get(1), Boolean.valueOf(cmd.hasOption("d")));
+            if (cmd.hasOption("d")) {
+                todoObject.setText("Done: " + todoObject.getText());
             }
-
-
-            if (fileName.endsWith("csv")) {
-                csvTodoChecker.insertTodo(fileName, fileContent, todoObject);
-            } else if (fileName.endsWith("json")) {
-                jsonTodoChecker.insertTodo(fileName, fileContent, todoObject);
-            }
+            todoChecker.insertTodo(fileName, todoObject);
         }
 
         if (command.equals("list")) {
-            boolean doneOnly = cmd.hasOption("done");
-            if (fileName.endsWith("csv")) {
-                csvTodoChecker.listTodos(fileName, fileContent, doneOnly);
-            } else if (fileName.endsWith("json")) {
-                jsonTodoChecker.listTodos(fileName, fileContent, doneOnly);
-            }
-
-
+            boolean doneOnly = cmd.hasOption("d");
+            todoChecker.listTodos(fileName, doneOnly);
         }
+
         System.err.println("Done.");
         return 0;
 

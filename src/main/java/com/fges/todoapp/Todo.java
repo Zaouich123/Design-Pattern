@@ -1,10 +1,13 @@
 package com.fges.todoapp;
 
-public class Todo {
+public class    Todo {
     private String text;
 
-    public Todo(String text) {
+    private boolean done;
+
+    public Todo(String text, Boolean done) {
         this.text = text;
+        this.done = done;
     }
 
     public String getText() {
