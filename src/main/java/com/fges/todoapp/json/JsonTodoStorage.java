@@ -1,9 +1,7 @@
-package com.fges.todoapp;
+package com.fges.todoapp.json;
 
-import com.fges.todoapp.JsonTodoReader;
-import com.fges.todoapp.JsonTodoWriter;
 import com.fges.todoapp.Todo;
-import com.fges.todoapp.TodoInterfaceStorage;
+import com.fges.todoapp.inter.TodoInterfaceStorage;
 
 import java.io.IOException;
 import java.util.List;

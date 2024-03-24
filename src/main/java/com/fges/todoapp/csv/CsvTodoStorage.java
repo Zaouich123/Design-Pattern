@@ -1,4 +1,7 @@
-package com.fges.todoapp;
+package com.fges.todoapp.csv;
+
+import com.fges.todoapp.Todo;
+import com.fges.todoapp.inter.TodoInterfaceStorage;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,10 +18,21 @@ public class CsvTodoStorage implements TodoInterfaceStorage {
     @Override
     public void listTodos(String fileName, boolean doneOnly) throws IOException {
         List<Todo> todos = csvTodoReader.readTodos(fileName);
-        for (Todo todo : todos) {
+        StringBuilder output = new StringBuilder();
+
+        for (int i = 0; i < todos.size(); i++) {
+            Todo todo = todos.get(i);
             if (!doneOnly || todo.isDone()) {
-                System.out.println("- " + todo.getText());
+                output.append("- ").append(todo.getText());
+                // Ajouter une virgule sauf pour la dernière tâche
+                if (i < todos.size() - 1) {
+                    output.append(", ");
+                }
             }
         }
+
+        System.out.println(output.toString());
     }
+
+
 }

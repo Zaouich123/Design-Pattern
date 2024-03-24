@@ -42,4 +42,17 @@
 > ## Description of classes
 > - Refer to the UML diagram.
 
-...
+---
+> #TP3
+> ## What did i changed ?
+> - i created interface command, insert,migrate,list command. Add package, many checkers like commandchecker, Todocheck
+> - reader and more
+> ## What helped me and why ?
+> - Nothing
+> ## What did I find difficult ?
+> - Dealing with ghost tests
+> ## What do i still need to change ?
+> - create web command and pass these ghost tests
+> ## Description of classes
+> - Refer To the UML diagram.
+

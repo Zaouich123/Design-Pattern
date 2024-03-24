@@ -1,4 +1,4 @@
-package com.fges.todoapp;
+package com.fges.todoapp.other;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,7 +11,7 @@ public class CommandeParser {
     public static CommandLine parse(String[] args) throws ParseException {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "Fichier contenant les todos");
-        cliOptions.addOption("d", false, "Liste seulement les todos terminés");
+        cliOptions.addOption("d", "done",false, "Liste seulement les todos terminés");
         cliOptions.addOption("o", "output", true, "Fichier de sortie pour la migration");
         try {
             CommandLineParser parser = new DefaultParser();

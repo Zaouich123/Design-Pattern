@@ -1,4 +1,6 @@
-package com.fges.todoapp;
+package com.fges.todoapp.inter;
+
+import com.fges.todoapp.Todo;
 
 import java.io.IOException;
 import java.util.List;

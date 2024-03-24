@@ -1,6 +1,9 @@
 package com.fges.todoapp;
 
 
+import com.fges.todoapp.checker.CommandChecker;
+import com.fges.todoapp.inter.Command;
+import com.fges.todoapp.other.CommandeParser;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -28,23 +31,14 @@ public class App {
         } catch (java.text.ParseException e) {
             throw new IllegalArgumentException("Erreur lors de l'analyse des arguments en ligne de commande.", e);
         }
-
         String fileName = cmd.getOptionValue("s");
-        String fileNameOutpout = cmd.getOptionValue("o");
-
         List<String> positionalArgs = cmd.getArgList();
         if (positionalArgs.isEmpty()) {
             System.err.println("Missing Command");
             return 1;
         }
 
-        String command = positionalArgs.get(0);
-
         Path filePath = Paths.get(fileName);
-        String fileContent = FileClass.readFileContent(fileName);
-
-        TodoInterfaceStorage todoChecker = TodoCheckFilename.createTodoChecker(fileName);
-        MigrationInterface MigrationFile = com.fges.todoapp.migration.MigrationCheckFilename.createMigration(fileName,fileNameOutpout);
 
         if (!Files.exists(filePath)) {
             try {
@@ -54,27 +48,9 @@ public class App {
                 return 1;
             }
         }
-
-        if (command.equals("insert")) {
-            if (positionalArgs.size() < 2) {
-                System.err.println("Missing TODO name");
-                return 1;
-            }
-            Todo todoObject = new Todo(positionalArgs.get(1), Boolean.valueOf(cmd.hasOption("d")));
-            if (cmd.hasOption("d")) {
-                todoObject.setText("Done: " + todoObject.getText());
-            }
-            todoChecker.insertTodo(fileName, todoObject);
-        }
-        if (command.equals("migrate")) {
-            MigrationFile.migrate(fileName,fileNameOutpout);
-        }
-
-        if (command.equals("list")) {
-            boolean doneOnly = cmd.hasOption("d");
-            todoChecker.listTodos(fileName, doneOnly);
-        }
-
+        String commandName = positionalArgs.get(0);
+        Command command = CommandChecker.createCommand(commandName);
+        command.execute(cmd);
         System.err.println("Done.");
         return 0;
 
